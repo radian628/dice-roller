@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "jsxImportSource": "solid-js",
+    "jsx": "preserve",
+    "lib": ["ES2019", "dom"],
+    "target": "ES2015",
+    "moduleResolution": "nodenext"
+  }
+}

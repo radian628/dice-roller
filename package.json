@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "less": "^4.2.0",
+    "napg": "^0.1.12",
+    "solid-js": "^1.7.11"
+  },
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.2",
+    "esbuild-plugin-copy": "^2.1.1",
+    "esbuild-plugin-less": "^1.2.4",
+    "esbuild-plugin-solid": "^0.5.0"
+  },
+  "type": "module"
+}
