@@ -79,7 +79,19 @@ export function DiceRollerREPL() {
               <code>2d6 - 3</code>
             </li>
             <li>
-              Roll 1d100 and subtract 3: <br></br>
+              Roll 1d4 + 5 8 times and add them together: <br></br>
+              <code>1d4 + 5 x8</code>
+            </li>
+            <li>
+              Roll 1d4 and multiply it by 5: <br></br>
+              <code>1d4 * 5</code>
+            </li>
+            <li>
+              Roll 1d8 and divide it by 2 (rounded down): <br></br>
+              <code>1d8 / 2</code>
+            </li>
+            <li>
+              Roll 1d100: <br></br>
               <code>1d100</code>
             </li>
             <li>
