@@ -2764,7 +2764,7 @@
             return props.value().type === "Boolean";
           },
           get children() {
-            return props.value().data;
+            return props.value().data.toString();
           }
         }), createComponent(Match, {
           get when() {
@@ -2967,7 +2967,7 @@
       get children() {
         return [createComponent(Match, {
           get when() {
-            return op() === BinOps.Add || op() === BinOps.Sub || op() === BinOps.Mul;
+            return op() === BinOps.Add || op() === BinOps.Sub || op() === BinOps.Mul || op() === BinOps.GreaterThan || op() === BinOps.LessEqual;
           },
           get children() {
             const _el$8 = _tmpl$43(), _el$9 = _el$8.firstChild, _el$11 = _el$9.nextSibling, _el$10 = _el$11.nextSibling;
@@ -2983,7 +2983,9 @@
             insert(_el$8, () => ({
               [BinOps.Add]: "+",
               [BinOps.Sub]: "-",
-              [BinOps.Mul]: "\xD7"
+              [BinOps.Mul]: "\xD7",
+              [BinOps.GreaterThan]: ">",
+              [BinOps.LessEqual]: "\u2264"
             })[op()], _el$11);
             insert(_el$8, createComponent(CalculationDisplay, {
               get context() {
@@ -3275,7 +3277,7 @@
   };
 
   // src/repl/repl.tsx
-  var _tmpl$10 = /* @__PURE__ */ template(`<div class="repl"><div class="repl-evaluations"></div><textarea class="repl-input">`);
+  var _tmpl$10 = /* @__PURE__ */ template(`<div class="repl"><div class="horizontal repl-evaluations-container"><div class="repl-evaluations"></div><div class="info"><h1>Dice Roller</h1><h2>Features:</h2><ul><li>Roll 2d6 and add 3: <br><code>2d6 + 3</code></li><li>Roll 2d6 and subtract 3: <br><code>2d6 - 3</code></li><li>Roll 1d100 and subtract 3: <br><code>1d100</code></li><li>Damage types: <br><code>1d12 slashing + 2d6 fire</code></li><li>Attack with a +5 modifier against an enemy with 13 AC, dealing 1d8+5 slashing damage: <br><code>attack(1d20+5, 13, 1d8+5 slashing)</code></li><li>Roll a d20 with advantage: <br><code>adv(1d20)</code></li></ul></div></div><textarea class="repl-input">`);
   function DiceRollerREPL() {
     const [evaluations, setEvaluations] = createSignal([]);
     const [code, setCode] = createSignal("3d6 + 5");
@@ -3296,7 +3298,7 @@
       }]);
     };
     return (() => {
-      const _el$ = _tmpl$10(), _el$2 = _el$.firstChild, _el$3 = _el$2.nextSibling;
+      const _el$ = _tmpl$10(), _el$2 = _el$.firstChild, _el$3 = _el$2.firstChild, _el$4 = _el$2.nextSibling;
       use((el) => {
         createEffect(() => {
           evaluations();
@@ -3306,8 +3308,8 @@
             behavior: "smooth"
           });
         });
-      }, _el$2);
-      insert(_el$2, createComponent(For, {
+      }, _el$3);
+      insert(_el$3, createComponent(For, {
         get each() {
           return evaluations();
         },
@@ -3323,16 +3325,16 @@
           })
         })
       }));
-      _el$3.$$input = (evt) => {
+      _el$4.$$input = (evt) => {
         setCode(evt.currentTarget.value);
       };
-      _el$3.$$keydown = (evt) => {
+      _el$4.$$keydown = (evt) => {
         if (evt.key === "Enter" && !evt.shiftKey) {
           handleSubmit();
           evt.preventDefault();
         }
       };
-      createRenderEffect(() => _el$3.value = code());
+      createRenderEffect(() => _el$4.value = code());
       return _el$;
     })();
   }

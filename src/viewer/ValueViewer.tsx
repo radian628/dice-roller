@@ -14,7 +14,7 @@ export function ValueViewer(props: {
   return (
     <Switch>
       <Match when={props.value().type === "Boolean"}>
-        {props.value().data as boolean}
+        {(props.value().data as boolean).toString()}
       </Match>
       <Match when={props.value().type === "Number"}>
         <For each={[...(props.value().data as Map<string, number>).entries()]}>

@@ -97,7 +97,11 @@ export function BinaryOpDisplay(props: CalculationDisplayProps<BinaryOpNode>) {
       <Switch>
         <Match
           when={
-            op() === BinOps.Add || op() === BinOps.Sub || op() === BinOps.Mul
+            op() === BinOps.Add ||
+            op() === BinOps.Sub ||
+            op() === BinOps.Mul ||
+            op() === BinOps.GreaterThan ||
+            op() === BinOps.LessEqual
           }
         >
           <div class="horizontal binary-op-display">
@@ -113,6 +117,8 @@ export function BinaryOpDisplay(props: CalculationDisplayProps<BinaryOpNode>) {
                   [BinOps.Add]: "+",
                   [BinOps.Sub]: "-",
                   [BinOps.Mul]: "×",
+                  [BinOps.GreaterThan]: ">",
+                  [BinOps.LessEqual]: "≤",
                 } as any
               )[op()]
             }

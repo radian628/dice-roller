@@ -41,28 +41,62 @@ export function DiceRollerREPL() {
 
   return (
     <div class="repl">
-      <div
-        class="repl-evaluations"
-        ref={(el) => {
-          createEffect(() => {
-            evaluations();
-            console.log("got here");
-            el.scrollTo({
-              top: 2147483647,
-              behavior: "smooth",
+      <div class="horizontal repl-evaluations-container">
+        <div
+          class="repl-evaluations"
+          ref={(el) => {
+            createEffect(() => {
+              evaluations();
+              console.log("got here");
+              el.scrollTo({
+                top: 2147483647,
+                behavior: "smooth",
+              });
             });
-          });
-        }}
-      >
-        <For each={evaluations()}>
-          {({ ctx, ast }) => (
-            <RootCalculationDisplay
-              context={() => ctx}
-              node={() => ast}
-              state={() => ({ summarizationLevel: 0, evaluate: true })}
-            ></RootCalculationDisplay>
-          )}
-        </For>
+          }}
+        >
+          <For each={evaluations()}>
+            {({ ctx, ast }) => (
+              <RootCalculationDisplay
+                context={() => ctx}
+                node={() => ast}
+                state={() => ({ summarizationLevel: 0, evaluate: true })}
+              ></RootCalculationDisplay>
+            )}
+          </For>
+        </div>
+        <div class="info">
+          <h1>Dice Roller</h1>
+          <h2>Features:</h2>
+
+          <ul>
+            <li>
+              Roll 2d6 and add 3: <br></br>
+              <code>2d6 + 3</code>
+            </li>
+            <li>
+              Roll 2d6 and subtract 3: <br></br>
+              <code>2d6 - 3</code>
+            </li>
+            <li>
+              Roll 1d100 and subtract 3: <br></br>
+              <code>1d100</code>
+            </li>
+            <li>
+              Damage types: <br></br>
+              <code>1d12 slashing + 2d6 fire</code>
+            </li>
+            <li>
+              Attack with a +5 modifier against an enemy with 13 AC, dealing
+              1d8+5 slashing damage: <br></br>
+              <code>attack(1d20+5, 13, 1d8+5 slashing)</code>
+            </li>
+            <li>
+              Roll a d20 with advantage: <br></br>
+              <code>adv(1d20)</code>
+            </li>
+          </ul>
+        </div>
       </div>
       <textarea
         class="repl-input"
