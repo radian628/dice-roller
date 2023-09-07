@@ -104,6 +104,10 @@ body {
 .error::before {
   content: "Error: ";
 }
+.repeat-description {
+  font-size: max(60%, 12px);
+  --die-size: 18px;
+}
 
 /* src/repl/repl.less */
 .repl {
@@ -123,6 +127,7 @@ body {
   margin-left: 1px solid var(--border);
   align-self: start;
   min-width: 20%;
+  max-width: 30%;
 }
 .info li {
   margin-bottom: 10px;

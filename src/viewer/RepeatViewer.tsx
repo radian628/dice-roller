@@ -15,7 +15,7 @@ export function RepeatViewer(props: CalculationDisplayProps<BinaryOpNode>) {
   return (
     <div class="binary-op-display vertical repeat-container">
       <Show when={repeatClones().length > RepeatSummarizationThreshold}>
-        <div class="horizontal">
+        <div class="horizontal repeat-description">
           <CalculationDisplay
             context={props.context}
             node={() => props.node().left}

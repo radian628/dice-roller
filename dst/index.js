@@ -2832,7 +2832,7 @@
   }
 
   // src/viewer/RepeatViewer.tsx
-  var _tmpl$6 = /* @__PURE__ */ template(`<div class="horizontal"><div class="vertical-divider"></div><span class="bigtext">x`);
+  var _tmpl$6 = /* @__PURE__ */ template(`<div class="horizontal repeat-description"><div class="vertical-divider"></div><span class="bigtext">x`);
   var _tmpl$23 = /* @__PURE__ */ template(`<div class="divider">`);
   var _tmpl$33 = /* @__PURE__ */ template(`<div class="binary-op-display vertical repeat-container"><table class="repeat-table"><thead><tr><th>Roll</th><th>Total`);
   var _tmpl$42 = /* @__PURE__ */ template(`<tr><td class="horizontal"></td><td>`);
