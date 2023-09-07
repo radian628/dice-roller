@@ -1,4 +1,4 @@
-import { For, Match, Show, Switch } from "solid-js";
+import { For, Match, Show, Switch, createEffect } from "solid-js";
 import { BinaryOpNode } from "../parser.jsx";
 import { CalculationDisplay, CalculationDisplayProps } from "./viewer.jsx";
 import { DRNumber, evaluateAST, total } from "../evaluator.jsx";
@@ -50,7 +50,8 @@ export function DiceRollsDisplay(props: CalculationDisplayProps<BinaryOpNode>) {
   const diceSize = () =>
     total(evaluateAST(props.node().right, props.context()).data as DRNumber);
 
-  console.log(props.context().diceRollResults.get(props.node()));
+  const diceResults = () =>
+    props.context().diceRollResults.get(props.node()) ?? [];
 
   return (
     <div class="vertical dice-rolls">
@@ -67,8 +68,18 @@ export function DiceRollsDisplay(props: CalculationDisplayProps<BinaryOpNode>) {
           state={props.state}
         ></CalculationDisplay>
       </div>
-      <div class="horizontal">
-        <For each={props.context().diceRollResults.get(props.node()) ?? []}>
+      <div
+        class="dice"
+        ref={(el) => {
+          createEffect(() => {
+            el.style.gridTemplateColumns = `repeat(${Math.min(
+              diceResults().length,
+              6
+            )}, 1fr)`;
+          });
+        }}
+      >
+        <For each={diceResults()}>
           {(result, i) => (
             <>
               <Show when={props.state().summarizationLevel > 0 && i() !== 0}>

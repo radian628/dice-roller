@@ -2653,7 +2653,7 @@
   // src/viewer/DiceRollsDisplay.tsx
   var _tmpl$ = /* @__PURE__ */ template(`<div class="dice-roll">`);
   var _tmpl$2 = /* @__PURE__ */ template(`<div class="vertical">`);
-  var _tmpl$3 = /* @__PURE__ */ template(`<div class="vertical dice-rolls"><div class="dice-quantity horizontal">d</div><div class="horizontal">`);
+  var _tmpl$3 = /* @__PURE__ */ template(`<div class="vertical dice-rolls"><div class="dice-quantity horizontal">d</div><div class="dice">`);
   var _tmpl$4 = /* @__PURE__ */ template(`<div class="vertical-divider">`);
   var SizeToBGImage = {
     4: "d4_1.blender.png",
@@ -2709,7 +2709,7 @@
     const left = () => props.node().left;
     const right = () => props.node().right;
     const diceSize = () => total(evaluateAST(props.node().right, props.context()).data);
-    console.log(props.context().diceRollResults.get(props.node()));
+    const diceResults = () => props.context().diceRollResults.get(props.node()) ?? [];
     return (() => {
       const _el$3 = _tmpl$3(), _el$4 = _el$3.firstChild, _el$5 = _el$4.firstChild, _el$6 = _el$4.nextSibling;
       insert(_el$4, createComponent(CalculationDisplay, {
@@ -2730,9 +2730,14 @@
           return props.state;
         }
       }), null);
+      use((el) => {
+        createEffect(() => {
+          el.style.gridTemplateColumns = `repeat(${Math.min(diceResults().length, 6)}, 1fr)`;
+        });
+      }, _el$6);
       insert(_el$6, createComponent(For, {
         get each() {
-          return props.context().diceRollResults.get(props.node()) ?? [];
+          return diceResults();
         },
         children: (result, i) => [createComponent(Show, {
           get when() {
