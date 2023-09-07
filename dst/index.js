@@ -2972,7 +2972,7 @@
       get children() {
         return [createComponent(Match, {
           get when() {
-            return op() === BinOps.Add || op() === BinOps.Sub || op() === BinOps.Mul || op() === BinOps.GreaterThan || op() === BinOps.LessEqual;
+            return op() === BinOps.Add || op() === BinOps.Sub || op() === BinOps.Mul || op() === BinOps.GreaterThan || op() === BinOps.LessEqual || op() === BinOps.And || op() === BinOps.Or;
           },
           get children() {
             const _el$8 = _tmpl$43(), _el$9 = _el$8.firstChild, _el$11 = _el$9.nextSibling, _el$10 = _el$11.nextSibling;
@@ -2990,7 +2990,9 @@
               [BinOps.Sub]: "-",
               [BinOps.Mul]: "\xD7",
               [BinOps.GreaterThan]: ">",
-              [BinOps.LessEqual]: "\u2264"
+              [BinOps.LessEqual]: "\u2264",
+              [BinOps.And]: "and",
+              [BinOps.Or]: "or"
             })[op()], _el$11);
             insert(_el$8, createComponent(CalculationDisplay, {
               get context() {
@@ -3282,7 +3284,7 @@
   };
 
   // src/repl/repl.tsx
-  var _tmpl$10 = /* @__PURE__ */ template(`<div class="repl"><div class="horizontal repl-evaluations-container"><div class="repl-evaluations"></div><div class="info"><h1>Dice Roller</h1><h2>Features:</h2><ul><li>Roll 2d6 and add 3: <br><code>2d6 + 3</code></li><li>Roll 2d6 and subtract 3: <br><code>2d6 - 3</code></li><li>Roll 1d4 + 5 8 times and add them together: <br><code>1d4 + 5 x8</code></li><li>Roll 1d4 and multiply it by 5: <br><code>1d4 * 5</code></li><li>Roll 1d8 and divide it by 2 (rounded down): <br><code>1d8 / 2</code></li><li>Roll 1d100: <br><code>1d100</code></li><li>Damage types: <br><code>1d12 slashing + 2d6 fire</code></li><li>Attack with a +5 modifier against an enemy with 13 AC, dealing 1d8+5 slashing damage: <br><code>attack(1d20+5, 13, 1d8+5 slashing)</code></li><li>Roll a d20 with advantage: <br><code>adv(1d20)</code></li></ul></div></div><textarea class="repl-input">`);
+  var _tmpl$10 = /* @__PURE__ */ template(`<div class="repl"><div class="horizontal repl-evaluations-container"><div class="repl-evaluations"></div><div class="info"><h1>Dice Roller</h1><h2>Examples</h2><ul><li>Roll 2d6 and add 3: <br><code>2d6 + 3</code></li><li>Roll 2d6 and subtract 3: <br><code>2d6 - 3</code></li><li>Roll 1d4 + 5 8 times and add them together: <br><code>1d4 + 5 x8</code></li><li>Roll 1d4 and multiply it by 5: <br><code>1d4 * 5</code></li><li>Roll 1d8 and divide it by 2 (rounded down): <br><code>1d8 / 2</code></li><li>Roll 1d100: <br><code>1d100</code></li><li>Damage types: <br><code>1d12 slashing + 2d6 fire</code></li><li>Attack with a +5 modifier against an enemy with 13 AC, dealing 1d8+5 slashing damage: <br><code>attack(1d20+5, 13, 1d8+5 slashing)</code></li><li>Roll a d20 with advantage: <br><code>adv(1d20)</code></li><li>Did I roll higher than a 3 on a d6 and less than or equal to a 4 on a d8?: <br><code>1d6 &gt; 3 and 1d8 &lt;= 4</code></li></ul></div></div><textarea class="repl-input">`);
   function DiceRollerREPL() {
     const [evaluations, setEvaluations] = createSignal([]);
     const [code, setCode] = createSignal("3d6 + 5");

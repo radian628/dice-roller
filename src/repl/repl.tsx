@@ -67,8 +67,7 @@ export function DiceRollerREPL() {
         </div>
         <div class="info">
           <h1>Dice Roller</h1>
-          <h2>Features:</h2>
-
+          <h2>Examples</h2>
           <ul>
             <li>
               Roll 2d6 and add 3: <br></br>
@@ -106,6 +105,11 @@ export function DiceRollerREPL() {
             <li>
               Roll a d20 with advantage: <br></br>
               <code>adv(1d20)</code>
+            </li>
+            <li>
+              Did I roll higher than a 3 on a d6 and less than or equal to a 4
+              on a d8?: <br></br>
+              <code>1d6 &gt; 3 and 1d8 &lt;= 4</code>
             </li>
           </ul>
         </div>

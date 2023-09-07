@@ -101,7 +101,9 @@ export function BinaryOpDisplay(props: CalculationDisplayProps<BinaryOpNode>) {
             op() === BinOps.Sub ||
             op() === BinOps.Mul ||
             op() === BinOps.GreaterThan ||
-            op() === BinOps.LessEqual
+            op() === BinOps.LessEqual ||
+            op() === BinOps.And ||
+            op() === BinOps.Or
           }
         >
           <div class="horizontal binary-op-display">
@@ -119,6 +121,8 @@ export function BinaryOpDisplay(props: CalculationDisplayProps<BinaryOpNode>) {
                   [BinOps.Mul]: "×",
                   [BinOps.GreaterThan]: ">",
                   [BinOps.LessEqual]: "≤",
+                  [BinOps.And]: "and",
+                  [BinOps.Or]: "or",
                 } as any
               )[op()]
             }
