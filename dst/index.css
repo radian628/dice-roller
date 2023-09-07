@@ -119,7 +119,7 @@ body {
   padding: 10px;
   margin-left: 1px solid var(--border);
   align-self: start;
-  max-width: 20%;
+  min-width: 20%;
 }
 .info li {
   margin-bottom: 10px;
