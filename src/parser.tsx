@@ -213,11 +213,15 @@ const consequentExpressionParselet = parselet<
         (first) => {
           if (TernaryBindingPower <= p.state.bindingPower) p.err("");
 
-          const ifTrue = p.parse(expressionParselet, { bindingPower: 0 });
+          const ifTrue = p.parse(expressionParselet, {
+            bindingPower: TernaryBindingPower,
+          });
           let ifFalse: PositionedNode | undefined;
           if (p.isNext(colon)) {
             p.lex(colon);
-            ifFalse = p.parse(expressionParselet, { bindingPower: 0 });
+            ifFalse = p.parse(expressionParselet, {
+              bindingPower: TernaryBindingPower,
+            });
           }
 
           return {
