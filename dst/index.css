@@ -123,11 +123,13 @@ body {
   overflow: auto;
 }
 .info {
+  max-height: calc(100vh - 150px);
   padding: 10px;
   margin-left: 1px solid var(--border);
   align-self: start;
   min-width: 20%;
   max-width: 30%;
+  overflow: auto;
 }
 .info li {
   margin-bottom: 10px;

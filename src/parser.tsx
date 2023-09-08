@@ -70,8 +70,9 @@ const bindingPowers: Record<BinOps, number> = {
   [BinOps.Repeat]: 0,
 };
 
-const BaseBindingPower = -10;
+const BaseBindingPower = -20;
 const DamageTypeBindingPower = 0;
+const TernaryBindingPower = -10;
 
 export type NumberNode = {
   number: number;
@@ -208,6 +209,26 @@ const consequentExpressionParselet = parselet<
         },
       ],
       [
+        questionMark,
+        (first) => {
+          if (TernaryBindingPower <= p.state.bindingPower) p.err("");
+
+          const ifTrue = p.parse(expressionParselet, { bindingPower: 0 });
+          let ifFalse: PositionedNode | undefined;
+          if (p.isNext(colon)) {
+            p.lex(colon);
+            ifFalse = p.parse(expressionParselet, { bindingPower: 0 });
+          }
+
+          return {
+            type: "TernaryNode",
+            condition: p.state.left,
+            ifTrue,
+            ifFalse,
+          };
+        },
+      ],
+      [
         damageType,
         (first) => {
           if (DamageTypeBindingPower <= p.state.bindingPower) p.err("");
@@ -237,7 +258,7 @@ const initExpressionParselet = parselet<InitParseState, NoErrorParseNode>(
         openParen,
         () => {
           const result = p.parse(expressionParselet, {
-            bindingPower: -100,
+            bindingPower: BaseBindingPower,
           });
           p.lex(closeParen);
           return result;

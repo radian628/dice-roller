@@ -6,6 +6,7 @@ import {
   FunctionCallNode,
   NumberNode,
   ParseNode,
+  TernaryNode,
 } from "../parser.jsx";
 import "./viewer.less";
 import { EvaluationContext, evaluateAST, total } from "../evaluator.jsx";
@@ -13,6 +14,7 @@ import { Match, Switch } from "solid-js";
 import { DiceRollsDisplay } from "./DiceRollsDisplay.jsx";
 import { ResultViewer, ValueViewer } from "./ValueViewer.jsx";
 import { RepeatViewer } from "./RepeatViewer.jsx";
+import { TernaryViewer } from "./TernaryViewer.jsx";
 
 export type CalculationDisplayState = {
   evaluate: boolean;
@@ -81,7 +83,9 @@ export function CalculationDisplay(props: CalculationDisplayProps<ParseNode>) {
           )}
         </Match>
         <Match when={type() === "TernaryNode"}>
-          <p>TODO</p>
+          <TernaryViewer
+            {...(props as CalculationDisplayProps<TernaryNode>)}
+          ></TernaryViewer>
         </Match>
       </Switch>
     </>
@@ -101,6 +105,8 @@ export function BinaryOpDisplay(props: CalculationDisplayProps<BinaryOpNode>) {
             op() === BinOps.Sub ||
             op() === BinOps.Mul ||
             op() === BinOps.GreaterThan ||
+            op() === BinOps.LessThan ||
+            op() === BinOps.GreaterEqual ||
             op() === BinOps.LessEqual ||
             op() === BinOps.And ||
             op() === BinOps.Or
@@ -120,6 +126,8 @@ export function BinaryOpDisplay(props: CalculationDisplayProps<BinaryOpNode>) {
                   [BinOps.Sub]: "-",
                   [BinOps.Mul]: "×",
                   [BinOps.GreaterThan]: ">",
+                  [BinOps.LessThan]: "<",
+                  [BinOps.GreaterEqual]: "≥",
                   [BinOps.LessEqual]: "≤",
                   [BinOps.And]: "and",
                   [BinOps.Or]: "or",

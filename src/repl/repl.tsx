@@ -111,6 +111,11 @@ export function DiceRollerREPL() {
               on a d8?: <br></br>
               <code>1d6 &gt; 3 and 1d8 &lt;= 4</code>
             </li>
+            <li>
+              If I fail my +7 DEX save on the fireball, deal 8d6 fire damage.
+              Instead, deal half that.<br></br>
+              <code>1d20 + 7 &lt; 17 ? 8d6 fire : 8d6/2 fire</code>
+            </li>
           </ul>
         </div>
       </div>

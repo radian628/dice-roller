@@ -2196,8 +2196,9 @@
     [BinOps.Or]: 10,
     [BinOps.Repeat]: 0
   };
-  var BaseBindingPower = -10;
+  var BaseBindingPower = -20;
   var DamageTypeBindingPower = 0;
+  var TernaryBindingPower = -10;
   var hashIPS = (state) => {
     return state.bindingPower;
   };
@@ -2245,6 +2246,25 @@
           bindingPower: nextBindingPower
         })
       };
+    }], [questionMark, (first) => {
+      if (TernaryBindingPower <= p.state.bindingPower)
+        p.err("");
+      const ifTrue = p.parse(expressionParselet2, {
+        bindingPower: 0
+      });
+      let ifFalse;
+      if (p.isNext(colon)) {
+        p.lex(colon);
+        ifFalse = p.parse(expressionParselet2, {
+          bindingPower: 0
+        });
+      }
+      return {
+        type: "TernaryNode",
+        condition: p.state.left,
+        ifTrue,
+        ifFalse
+      };
     }], [damageType, (first) => {
       if (DamageTypeBindingPower <= p.state.bindingPower)
         p.err("");
@@ -2262,7 +2282,7 @@
   var initExpressionParselet2 = parselet3((p) => {
     return p.lexMatch(() => p.err("Expected '(', a number, or a variable name."), [openParen, () => {
       const result = p.parse(expressionParselet2, {
-        bindingPower: -100
+        bindingPower: BaseBindingPower
       });
       p.lex(closeParen);
       return result;
@@ -2633,7 +2653,7 @@
         const ifFalse = node.ifFalse ? evaluateAST(node.ifFalse, context) : success(drData.number(/* @__PURE__ */ new Map()));
         if (condition.type === "Failure")
           return condition;
-        if (condition) {
+        if (condition.data.data) {
           return ifTrue;
         } else {
           return ifFalse;
@@ -2892,18 +2912,70 @@
     })();
   }
 
+  // src/viewer/TernaryViewer.tsx
+  var _tmpl$7 = /* @__PURE__ */ template(`<div class="vertical-divider">`);
+  var _tmpl$24 = /* @__PURE__ */ template(`<div class="vertical">No`);
+  var _tmpl$34 = /* @__PURE__ */ template(`<div class="horizontal">Is&nbsp;<div class="vertical-divider"></div><div class="vertical">Yes`);
+  function TernaryViewer(props) {
+    const condition = () => evaluateAST(props.node().condition, props.context()).data.data;
+    console.log(props.node().condition);
+    return (() => {
+      const _el$ = _tmpl$34(), _el$2 = _el$.firstChild, _el$3 = _el$2.nextSibling, _el$4 = _el$3.nextSibling, _el$5 = _el$4.firstChild;
+      insert(_el$, createComponent(CalculationDisplay, {
+        node: () => props.node().condition,
+        get context() {
+          return props.context;
+        },
+        get state() {
+          return props.state;
+        }
+      }), _el$3);
+      insert(_el$4, createComponent(CalculationDisplay, {
+        node: () => props.node().ifTrue,
+        get context() {
+          return props.context;
+        },
+        get state() {
+          return props.state;
+        }
+      }), null);
+      insert(_el$, createComponent(Show, {
+        get when() {
+          return props.node().ifFalse;
+        },
+        get children() {
+          return [_tmpl$7(), (() => {
+            const _el$7 = _tmpl$24(), _el$8 = _el$7.firstChild;
+            insert(_el$7, createComponent(CalculationDisplay, {
+              node: () => props.node().ifFalse,
+              get context() {
+                return props.context;
+              },
+              get state() {
+                return props.state;
+              }
+            }), null);
+            createRenderEffect(() => (condition() ? 0.5 : 1) != null ? _el$7.style.setProperty("opacity", condition() ? 0.5 : 1) : _el$7.style.removeProperty("opacity"));
+            return _el$7;
+          })()];
+        }
+      }), null);
+      createRenderEffect(() => (condition() ? 1 : 0.5) != null ? _el$4.style.setProperty("opacity", condition() ? 1 : 0.5) : _el$4.style.removeProperty("opacity"));
+      return _el$;
+    })();
+  }
+
   // src/viewer/viewer.tsx
-  var _tmpl$7 = /* @__PURE__ */ template(`<div class="root-dice-roller-display horizontal">&nbsp;=&nbsp;`);
-  var _tmpl$24 = /* @__PURE__ */ template(`<p>TODO`);
-  var _tmpl$34 = /* @__PURE__ */ template(`<div class="error">Unrecognized function/variable '<!>'`);
-  var _tmpl$43 = /* @__PURE__ */ template(`<div class="horizontal binary-op-display">&nbsp;<!>&nbsp;`);
-  var _tmpl$52 = /* @__PURE__ */ template(`<div class="vertical binary-op-display"><div class="vinculum">`);
-  var _tmpl$62 = /* @__PURE__ */ template(`<div>`);
-  var _tmpl$72 = /* @__PURE__ */ template(`<div class="horizontal damage-type">&nbsp;`);
+  var _tmpl$8 = /* @__PURE__ */ template(`<div class="root-dice-roller-display horizontal">&nbsp;=&nbsp;`);
+  var _tmpl$25 = /* @__PURE__ */ template(`<div class="error">Unrecognized function/variable '<!>'`);
+  var _tmpl$35 = /* @__PURE__ */ template(`<div class="horizontal binary-op-display">&nbsp;<!>&nbsp;`);
+  var _tmpl$43 = /* @__PURE__ */ template(`<div class="vertical binary-op-display"><div class="vinculum">`);
+  var _tmpl$52 = /* @__PURE__ */ template(`<div>`);
+  var _tmpl$62 = /* @__PURE__ */ template(`<div class="horizontal damage-type">&nbsp;`);
   function RootCalculationDisplay(props) {
     const value = () => evaluateAST(props.node(), props.context());
     return (() => {
-      const _el$ = _tmpl$7(), _el$2 = _el$.firstChild;
+      const _el$ = _tmpl$8(), _el$2 = _el$.firstChild;
       use((el) => {
         setTimeout(() => {
           el.style.backgroundColor = "var(--background)";
@@ -2948,9 +3020,9 @@
           },
           get children() {
             return props.context().functionComponents.get(props.node())?.(props) ?? (() => {
-              const _el$4 = _tmpl$34(), _el$5 = _el$4.firstChild, _el$7 = _el$5.nextSibling, _el$6 = _el$7.nextSibling;
-              insert(_el$4, () => props.node().functionName, _el$7);
-              return _el$4;
+              const _el$3 = _tmpl$25(), _el$4 = _el$3.firstChild, _el$6 = _el$4.nextSibling, _el$5 = _el$6.nextSibling;
+              insert(_el$3, () => props.node().functionName, _el$6);
+              return _el$3;
             })();
           }
         }), createComponent(Match, {
@@ -2958,7 +3030,7 @@
             return type() === "TernaryNode";
           },
           get children() {
-            return _tmpl$24();
+            return createComponent(TernaryViewer, props);
           }
         })];
       }
@@ -2972,11 +3044,11 @@
       get children() {
         return [createComponent(Match, {
           get when() {
-            return op() === BinOps.Add || op() === BinOps.Sub || op() === BinOps.Mul || op() === BinOps.GreaterThan || op() === BinOps.LessEqual || op() === BinOps.And || op() === BinOps.Or;
+            return op() === BinOps.Add || op() === BinOps.Sub || op() === BinOps.Mul || op() === BinOps.GreaterThan || op() === BinOps.LessThan || op() === BinOps.GreaterEqual || op() === BinOps.LessEqual || op() === BinOps.And || op() === BinOps.Or;
           },
           get children() {
-            const _el$8 = _tmpl$43(), _el$9 = _el$8.firstChild, _el$11 = _el$9.nextSibling, _el$10 = _el$11.nextSibling;
-            insert(_el$8, createComponent(CalculationDisplay, {
+            const _el$7 = _tmpl$35(), _el$8 = _el$7.firstChild, _el$10 = _el$8.nextSibling, _el$9 = _el$10.nextSibling;
+            insert(_el$7, createComponent(CalculationDisplay, {
               get context() {
                 return props.context;
               },
@@ -2984,17 +3056,19 @@
               get state() {
                 return props.state;
               }
-            }), _el$9);
-            insert(_el$8, () => ({
+            }), _el$8);
+            insert(_el$7, () => ({
               [BinOps.Add]: "+",
               [BinOps.Sub]: "-",
               [BinOps.Mul]: "\xD7",
               [BinOps.GreaterThan]: ">",
+              [BinOps.LessThan]: "<",
+              [BinOps.GreaterEqual]: "\u2265",
               [BinOps.LessEqual]: "\u2264",
               [BinOps.And]: "and",
               [BinOps.Or]: "or"
-            })[op()], _el$11);
-            insert(_el$8, createComponent(CalculationDisplay, {
+            })[op()], _el$10);
+            insert(_el$7, createComponent(CalculationDisplay, {
               get context() {
                 return props.context;
               },
@@ -3003,7 +3077,7 @@
                 return props.state;
               }
             }), null);
-            return _el$8;
+            return _el$7;
           }
         }), createComponent(Match, {
           get when() {
@@ -3024,8 +3098,8 @@
             return op() === BinOps.Div;
           },
           get children() {
-            const _el$12 = _tmpl$52(), _el$13 = _el$12.firstChild;
-            insert(_el$12, createComponent(CalculationDisplay, {
+            const _el$11 = _tmpl$43(), _el$12 = _el$11.firstChild;
+            insert(_el$11, createComponent(CalculationDisplay, {
               get context() {
                 return props.context;
               },
@@ -3033,8 +3107,8 @@
               get state() {
                 return props.state;
               }
-            }), _el$13);
-            insert(_el$12, createComponent(CalculationDisplay, {
+            }), _el$12);
+            insert(_el$11, createComponent(CalculationDisplay, {
               get context() {
                 return props.context;
               },
@@ -3043,7 +3117,7 @@
                 return props.state;
               }
             }), null);
-            return _el$12;
+            return _el$11;
           }
         })];
       }
@@ -3051,15 +3125,15 @@
   }
   function NumberDisplay(props) {
     return (() => {
-      const _el$14 = _tmpl$62();
-      insert(_el$14, () => props.node().number);
-      return _el$14;
+      const _el$13 = _tmpl$52();
+      insert(_el$13, () => props.node().number);
+      return _el$13;
     })();
   }
   function DamageTypeDisplay(props) {
     return (() => {
-      const _el$15 = _tmpl$72(), _el$16 = _el$15.firstChild;
-      insert(_el$15, createComponent(CalculationDisplay, {
+      const _el$14 = _tmpl$62(), _el$15 = _el$14.firstChild;
+      insert(_el$14, createComponent(CalculationDisplay, {
         get context() {
           return props.context;
         },
@@ -3067,16 +3141,16 @@
         get state() {
           return props.state;
         }
-      }), _el$16);
-      insert(_el$15, () => props.node().damageType, null);
-      return _el$15;
+      }), _el$15);
+      insert(_el$14, () => props.node().damageType, null);
+      return _el$14;
     })();
   }
 
   // src/functions/attack.tsx
-  var _tmpl$8 = /* @__PURE__ */ template(`<div class="error">Attack roll calculation caused an error:`);
-  var _tmpl$25 = /* @__PURE__ */ template(`<div class="error">AC calculation caused an error:`);
-  var _tmpl$35 = /* @__PURE__ */ template(`<div class="vertical-divider">`);
+  var _tmpl$9 = /* @__PURE__ */ template(`<div class="error">Attack roll calculation caused an error:`);
+  var _tmpl$26 = /* @__PURE__ */ template(`<div class="error">AC calculation caused an error:`);
+  var _tmpl$36 = /* @__PURE__ */ template(`<div class="vertical-divider">`);
   var _tmpl$44 = /* @__PURE__ */ template(`<div class="horizontal"><div class="horizontal">&nbsp;</div><div class="horizontal">&nbsp;vs&nbsp;<!>&nbsp;AC</div><div class="vertical-divider">`);
   var attack = (call, evaluationCtx2) => {
     const [attackRoll, ac, damage] = call.arguments;
@@ -3087,7 +3161,7 @@
       return {
         result: attackRollResult,
         component: (props) => (() => {
-          const _el$ = _tmpl$8(), _el$2 = _el$.firstChild;
+          const _el$ = _tmpl$9(), _el$2 = _el$.firstChild;
           insert(_el$, createComponent(CalculationDisplay, {
             get state() {
               return props.state;
@@ -3106,7 +3180,7 @@
       return {
         result: acResult,
         component: (props) => (() => {
-          const _el$3 = _tmpl$25(), _el$4 = _el$3.firstChild;
+          const _el$3 = _tmpl$26(), _el$4 = _el$3.firstChild;
           insert(_el$3, createComponent(CalculationDisplay, {
             get state() {
               return props.state;
@@ -3161,7 +3235,7 @@
               return props.state().evaluate;
             },
             get children() {
-              return [_tmpl$35(), didHit ? "Hit!" : "Miss"];
+              return [_tmpl$36(), didHit ? "Hit!" : "Miss"];
             }
           }), _el$13);
           insert(_el$5, createComponent(Show, {
@@ -3193,9 +3267,9 @@
   };
 
   // src/functions/advantage.tsx
-  var _tmpl$9 = /* @__PURE__ */ template(`<div class="error">Error while trying to roll with advantage.`);
-  var _tmpl$26 = /* @__PURE__ */ template(`<div><div class="horizontal"><div class="vertical-divider"></div>&nbsp;`);
-  var _tmpl$36 = /* @__PURE__ */ template(`<div>Advantage`);
+  var _tmpl$10 = /* @__PURE__ */ template(`<div class="error">Error while trying to roll with advantage.`);
+  var _tmpl$27 = /* @__PURE__ */ template(`<div><div class="horizontal"><div class="vertical-divider"></div>&nbsp;`);
+  var _tmpl$37 = /* @__PURE__ */ template(`<div>Advantage`);
   var advantage = (call, evaluationCtx2) => {
     const [operand] = call.arguments;
     const try1Node = operand;
@@ -3206,7 +3280,7 @@
       return {
         result: try1,
         component: (props) => (() => {
-          const _el$ = _tmpl$9(), _el$2 = _el$.firstChild;
+          const _el$ = _tmpl$10(), _el$2 = _el$.firstChild;
           insert(_el$, createComponent(CalculationDisplay, {
             get state() {
               return props.state;
@@ -3224,7 +3298,7 @@
       return {
         result: try2,
         component: (props) => (() => {
-          const _el$3 = _tmpl$9(), _el$4 = _el$3.firstChild;
+          const _el$3 = _tmpl$10(), _el$4 = _el$3.firstChild;
           insert(_el$3, createComponent(CalculationDisplay, {
             get state() {
               return props.state;
@@ -3248,7 +3322,7 @@
                 return props.state().summarizationLevel === 0;
               },
               get children() {
-                const _el$5 = _tmpl$26(), _el$6 = _el$5.firstChild, _el$7 = _el$6.firstChild, _el$8 = _el$7.nextSibling;
+                const _el$5 = _tmpl$27(), _el$6 = _el$5.firstChild, _el$7 = _el$6.firstChild, _el$8 = _el$7.nextSibling;
                 insert(_el$6, createComponent(CalculationDisplay, {
                   get state() {
                     return props.state;
@@ -3274,7 +3348,7 @@
                 return props.state().summarizationLevel >= 1;
               },
               get children() {
-                return _tmpl$36();
+                return _tmpl$37();
               }
             })];
           }
@@ -3284,7 +3358,7 @@
   };
 
   // src/repl/repl.tsx
-  var _tmpl$10 = /* @__PURE__ */ template(`<div class="repl"><div class="horizontal repl-evaluations-container"><div class="repl-evaluations"></div><div class="info"><h1>Dice Roller</h1><h2>Examples</h2><ul><li>Roll 2d6 and add 3: <br><code>2d6 + 3</code></li><li>Roll 2d6 and subtract 3: <br><code>2d6 - 3</code></li><li>Roll 1d4 + 5 8 times and add them together: <br><code>1d4 + 5 x8</code></li><li>Roll 1d4 and multiply it by 5: <br><code>1d4 * 5</code></li><li>Roll 1d8 and divide it by 2 (rounded down): <br><code>1d8 / 2</code></li><li>Roll 1d100: <br><code>1d100</code></li><li>Damage types: <br><code>1d12 slashing + 2d6 fire</code></li><li>Attack with a +5 modifier against an enemy with 13 AC, dealing 1d8+5 slashing damage: <br><code>attack(1d20+5, 13, 1d8+5 slashing)</code></li><li>Roll a d20 with advantage: <br><code>adv(1d20)</code></li><li>Did I roll higher than a 3 on a d6 and less than or equal to a 4 on a d8?: <br><code>1d6 &gt; 3 and 1d8 &lt;= 4</code></li></ul></div></div><textarea class="repl-input">`);
+  var _tmpl$11 = /* @__PURE__ */ template(`<div class="repl"><div class="horizontal repl-evaluations-container"><div class="repl-evaluations"></div><div class="info"><h1>Dice Roller</h1><h2>Examples</h2><ul><li>Roll 2d6 and add 3: <br><code>2d6 + 3</code></li><li>Roll 2d6 and subtract 3: <br><code>2d6 - 3</code></li><li>Roll 1d4 + 5 8 times and add them together: <br><code>1d4 + 5 x8</code></li><li>Roll 1d4 and multiply it by 5: <br><code>1d4 * 5</code></li><li>Roll 1d8 and divide it by 2 (rounded down): <br><code>1d8 / 2</code></li><li>Roll 1d100: <br><code>1d100</code></li><li>Damage types: <br><code>1d12 slashing + 2d6 fire</code></li><li>Attack with a +5 modifier against an enemy with 13 AC, dealing 1d8+5 slashing damage: <br><code>attack(1d20+5, 13, 1d8+5 slashing)</code></li><li>Roll a d20 with advantage: <br><code>adv(1d20)</code></li><li>Did I roll higher than a 3 on a d6 and less than or equal to a 4 on a d8?: <br><code>1d6 &gt; 3 and 1d8 &lt;= 4</code></li><li>If I fail my +7 DEX save on the fireball, deal 8d6 fire damage. Instead, deal half that.<br><code>1d20 + 7 &lt; 17 ? 8d6 fire : 8d6/2 fire</code></li></ul></div></div><textarea class="repl-input">`);
   function DiceRollerREPL() {
     const [evaluations, setEvaluations] = createSignal([]);
     const [code, setCode] = createSignal("3d6 + 5");
@@ -3305,7 +3379,7 @@
       }]);
     };
     return (() => {
-      const _el$ = _tmpl$10(), _el$2 = _el$.firstChild, _el$3 = _el$2.firstChild, _el$4 = _el$2.nextSibling;
+      const _el$ = _tmpl$11(), _el$2 = _el$.firstChild, _el$3 = _el$2.firstChild, _el$4 = _el$2.nextSibling;
       use((el) => {
         createEffect(() => {
           evaluations();

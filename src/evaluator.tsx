@@ -464,7 +464,7 @@ function evaluateASTNoCache(
 
       if (condition.type === "Failure") return condition;
 
-      if (condition) {
+      if (condition.data.data) {
         return ifTrue;
       } else {
         return ifFalse;
