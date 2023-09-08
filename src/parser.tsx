@@ -67,10 +67,10 @@ const bindingPowers: Record<BinOps, number> = {
   [BinOps.LessEqual]: 20,
   [BinOps.And]: 10,
   [BinOps.Or]: 10,
-  [BinOps.Repeat]: 0,
+  [BinOps.Repeat]: -20,
 };
 
-const BaseBindingPower = -20;
+const BaseBindingPower = -30;
 const DamageTypeBindingPower = 0;
 const TernaryBindingPower = -10;
 

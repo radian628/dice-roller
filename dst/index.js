@@ -2194,9 +2194,9 @@
     [BinOps.LessEqual]: 20,
     [BinOps.And]: 10,
     [BinOps.Or]: 10,
-    [BinOps.Repeat]: 0
+    [BinOps.Repeat]: -20
   };
-  var BaseBindingPower = -20;
+  var BaseBindingPower = -30;
   var DamageTypeBindingPower = 0;
   var TernaryBindingPower = -10;
   var hashIPS = (state) => {
