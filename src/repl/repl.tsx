@@ -67,6 +67,13 @@ export function DiceRollerREPL() {
         </div>
         <div class="info">
           <h1>Dice Roller</h1>
+          <h2>Development</h2>
+          <p>
+            Suggestions? Questions? Bug reports? Anything else of the sort?{" "}
+            <a href="https://github.com/radian628/dice-roller">
+              I'd love to see your feedback on GitHub here!
+            </a>
+          </p>
           <h2>Examples</h2>
           <ul>
             <li>
