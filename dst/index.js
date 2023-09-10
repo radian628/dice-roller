@@ -1,5 +1,61 @@
 "use strict";
 (() => {
+  var __create = Object.create;
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getProtoOf = Object.getPrototypeOf;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __commonJS = (cb, mod) => function __require() {
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+    // If the importer is in node compatibility mode or this is not an ESM
+    // file that has been converted to a CommonJS file using a Babel-
+    // compatible transform (i.e. "__esModule" has not been set), then set
+    // "default" to the CommonJS "module.exports" for node compatibility.
+    isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+    mod
+  ));
+
+  // node_modules/is-mobile/index.js
+  var require_is_mobile = __commonJS({
+    "node_modules/is-mobile/index.js"(exports, module) {
+      "use strict";
+      module.exports = isMobile2;
+      module.exports.isMobile = isMobile2;
+      module.exports.default = isMobile2;
+      var mobileRE = /(android|bb\d+|meego).+mobile|armv7l|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series[46]0|samsungbrowser.*mobile|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i;
+      var notMobileRE = /CrOS/;
+      var tabletRE = /android|ipad|playbook|silk/i;
+      function isMobile2(opts) {
+        if (!opts)
+          opts = {};
+        let ua = opts.ua;
+        if (!ua && typeof navigator !== "undefined")
+          ua = navigator.userAgent;
+        if (ua && ua.headers && typeof ua.headers["user-agent"] === "string") {
+          ua = ua.headers["user-agent"];
+        }
+        if (typeof ua !== "string")
+          return false;
+        let result = mobileRE.test(ua) && !notMobileRE.test(ua) || !!opts.tablet && tabletRE.test(ua);
+        if (!result && opts.tablet && opts.featureDetect && navigator && navigator.maxTouchPoints > 1 && ua.indexOf("Macintosh") !== -1 && ua.indexOf("Safari") !== -1) {
+          result = true;
+        }
+        return result;
+      }
+    }
+  });
+
   // node_modules/solid-js/dist/solid.js
   var sharedConfig = {
     context: void 0,
@@ -871,6 +927,7 @@
       }
     }
   }
+  var $$EVENTS = "_$DX_DELEGATE";
   function render(code, element, init, options = {}) {
     let disposer;
     createRoot((dispose2) => {
@@ -893,6 +950,16 @@
     fn.cloneNode = fn;
     return fn;
   }
+  function delegateEvents(eventNames, document2 = window.document) {
+    const e = document2[$$EVENTS] || (document2[$$EVENTS] = /* @__PURE__ */ new Set());
+    for (let i = 0, l = eventNames.length; i < l; i++) {
+      const name2 = eventNames[i];
+      if (!e.has(name2)) {
+        e.add(name2);
+        document2.addEventListener(name2, eventHandler);
+      }
+    }
+  }
   function use(fn, element, arg) {
     return untrack(() => fn(element, arg));
   }
@@ -902,6 +969,34 @@
     if (typeof accessor !== "function")
       return insertExpression(parent, accessor, initial, marker);
     createRenderEffect((current) => insertExpression(parent, accessor(), current, marker), initial);
+  }
+  function eventHandler(e) {
+    const key = `$$${e.type}`;
+    let node = e.composedPath && e.composedPath()[0] || e.target;
+    if (e.target !== node) {
+      Object.defineProperty(e, "target", {
+        configurable: true,
+        value: node
+      });
+    }
+    Object.defineProperty(e, "currentTarget", {
+      configurable: true,
+      get() {
+        return node || document;
+      }
+    });
+    if (sharedConfig.registry && !sharedConfig.done)
+      sharedConfig.done = _$HY.done = true;
+    while (node) {
+      const handler = node[key];
+      if (handler && !node.disabled) {
+        const data = node[`${key}Data`];
+        data !== void 0 ? handler.call(node, data, e) : handler.call(node, e);
+        if (e.cancelBubble)
+          return;
+      }
+      node = node._$host || node.parentNode || node.host;
+    }
   }
   function insertExpression(parent, value, current, marker, unwrapArray) {
     if (sharedConfig.context) {
@@ -19642,7 +19737,7 @@
   ];
 
   // src/repl/code-input.tsx
-  var _tmpl$11 = /* @__PURE__ */ template(`<div class="repl-input">`);
+  var _tmpl$11 = /* @__PURE__ */ template(`<div class="horizontal"><div class="repl-input"></div><button class="run-button">Roll`);
   function getDiceRollerSyntaxHighlightingFromAST(ast2) {
     const decorations2 = [];
     function map(node) {
@@ -19703,7 +19798,7 @@
   }
   function CodeInput(props) {
     return (() => {
-      const _el$ = _tmpl$11();
+      const _el$ = _tmpl$11(), _el$2 = _el$.firstChild, _el$3 = _el$2.nextSibling;
       use((el) => {
         const extensions = () => [syntaxHighlighting(defaultHighlightStyle, {
           fallback: true
@@ -19735,13 +19830,36 @@
           state,
           parent: el
         });
-      }, _el$);
+      }, _el$2);
+      _el$3.$$click = () => {
+        props.run();
+      };
       return _el$;
     })();
   }
+  delegateEvents(["click"]);
+
+  // src/repl/info.tsx
+  var _tmpl$12 = /* @__PURE__ */ template(`<div class="info"><h1>Dice Roller</h1><h2>Development</h2><p>Suggestions? Questions? Bug reports? Anything else of the sort? <a href="https://github.com/radian628/dice-roller">I'd love to see your feedback on GitHub here!</a></p><h2>Examples</h2><ul><li>Roll 2d6 and add 3: <br><code>2d6 + 3</code></li><li>Roll 2d6 and subtract 3: <br><code>2d6 - 3</code></li><li>Roll 1d4 + 5 8 times and add them together: <br><code>1d4 + 5 x8</code></li><li>Roll 1d4 and multiply it by 5: <br><code>1d4 * 5</code></li><li>Roll 1d8 and divide it by 2 (rounded down): <br><code>1d8 / 2</code></li><li>Roll 1d100: <br><code>1d100</code></li><li>Damage types: <br><code>1d12 slashing + 2d6 fire</code></li><li>Attack with a +5 modifier against an enemy with 13 AC, dealing 1d8+5 slashing damage: <br><code>attack(1d20+5, 13, 1d8+5 slashing)</code></li><li>Roll a d20 with advantage: <br><code>adv(1d20)</code></li><li>Did I roll higher than a 3 on a d6 and less than or equal to a 4 on a d8?: <br><code>1d6 &gt; 3 and 1d8 &lt;= 4</code></li><li>If I fail my +7 DEX save on the fireball, deal 8d6 fire damage. Instead, deal half that.<br><code>1d20 + 7 &lt; 17 ? 8d6 fire : 8d6/2 fire`);
+  function Info() {
+    return _tmpl$12();
+  }
+
+  // src/utils/platform.tsx
+  var import_is_mobile = __toESM(require_is_mobile(), 1);
+  function DesktopOnly(props) {
+    return createComponent(Show, {
+      get when() {
+        return !(0, import_is_mobile.isMobile)();
+      },
+      get children() {
+        return props.children;
+      }
+    });
+  }
 
   // src/repl/repl.tsx
-  var _tmpl$12 = /* @__PURE__ */ template(`<div class="repl"><div class="horizontal repl-evaluations-container"><div class="repl-evaluations"></div><div class="info"><h1>Dice Roller</h1><h2>Development</h2><p>Suggestions? Questions? Bug reports? Anything else of the sort? <a href="https://github.com/radian628/dice-roller">I'd love to see your feedback on GitHub here!</a></p><h2>Examples</h2><ul><li>Roll 2d6 and add 3: <br><code>2d6 + 3</code></li><li>Roll 2d6 and subtract 3: <br><code>2d6 - 3</code></li><li>Roll 1d4 + 5 8 times and add them together: <br><code>1d4 + 5 x8</code></li><li>Roll 1d4 and multiply it by 5: <br><code>1d4 * 5</code></li><li>Roll 1d8 and divide it by 2 (rounded down): <br><code>1d8 / 2</code></li><li>Roll 1d100: <br><code>1d100</code></li><li>Damage types: <br><code>1d12 slashing + 2d6 fire</code></li><li>Attack with a +5 modifier against an enemy with 13 AC, dealing 1d8+5 slashing damage: <br><code>attack(1d20+5, 13, 1d8+5 slashing)</code></li><li>Roll a d20 with advantage: <br><code>adv(1d20)</code></li><li>Did I roll higher than a 3 on a d6 and less than or equal to a 4 on a d8?: <br><code>1d6 &gt; 3 and 1d8 &lt;= 4</code></li><li>If I fail my +7 DEX save on the fireball, deal 8d6 fire damage. Instead, deal half that.<br><code>1d20 + 7 &lt; 17 ? 8d6 fire : 8d6/2 fire`);
+  var _tmpl$13 = /* @__PURE__ */ template(`<div class="repl"><div class="horizontal repl-evaluations-container"><div class="repl-evaluations">`);
   function DiceRollerREPL() {
     const [evaluations, setEvaluations] = createSignal([]);
     const [code, setCode] = createSignal("3d6 + 5");
@@ -19762,7 +19880,7 @@
       }]);
     };
     return (() => {
-      const _el$ = _tmpl$12(), _el$2 = _el$.firstChild, _el$3 = _el$2.firstChild;
+      const _el$ = _tmpl$13(), _el$2 = _el$.firstChild, _el$3 = _el$2.firstChild;
       use((el) => {
         createEffect(() => {
           evaluations();
@@ -19789,6 +19907,11 @@
           })
         })
       }));
+      insert(_el$2, createComponent(DesktopOnly, {
+        get children() {
+          return createComponent(Info, {});
+        }
+      }), null);
       insert(_el$, createComponent(CodeInput, {
         code,
         setCode,

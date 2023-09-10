@@ -139,3 +139,6 @@ body {
   min-height: 100px;
   margin-bottom: 10px;
 }
+.run-button {
+  align-self: stretch;
+}

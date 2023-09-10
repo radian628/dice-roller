@@ -110,52 +110,62 @@ export function CodeInput(props: {
   run: () => void;
 }) {
   return (
-    <div
-      class="repl-input"
-      ref={(el) => {
-        const extensions: () => Extension = () => [
-          syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-          keymap.of([
-            {
-              key: "Enter",
-              run() {
-                props.run();
-                return true;
+    <div class="horizontal">
+      <div
+        class="repl-input"
+        ref={(el) => {
+          const extensions: () => Extension = () => [
+            syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+            keymap.of([
+              {
+                key: "Enter",
+                run() {
+                  props.run();
+                  return true;
+                },
               },
-            },
-          ]),
-          keymap.of(defaultKeymap),
-          EditorView.updateListener.of((v) => {
-            if (v.docChanged) {
-              const docstring = v.state.doc.toString();
-              props.setCode(docstring);
-            }
-          }),
-          diceRollerSyntaxHighlighterPlugin(),
-          diceRollerDiagnosticPlugin(),
-        ];
+            ]),
+            keymap.of(defaultKeymap),
+            EditorView.updateListener.of((v) => {
+              if (v.docChanged) {
+                const docstring = v.state.doc.toString();
+                props.setCode(docstring);
+              }
+            }),
+            diceRollerSyntaxHighlighterPlugin(),
+            diceRollerDiagnosticPlugin(),
+          ];
 
-        const state = EditorState.create({
-          doc: props.code(),
-          extensions: extensions(),
-        });
-
-        createEffect(() => {
-          untrack(() => {
-            view.setState(
-              EditorState.create({
-                doc: props.code(),
-                extensions: extensions(),
-              })
-            );
+          const state = EditorState.create({
+            doc: props.code(),
+            extensions: extensions(),
           });
-        });
 
-        const view = new EditorView({
-          state,
-          parent: el,
-        });
-      }}
-    ></div>
+          createEffect(() => {
+            untrack(() => {
+              view.setState(
+                EditorState.create({
+                  doc: props.code(),
+                  extensions: extensions(),
+                })
+              );
+            });
+          });
+
+          const view = new EditorView({
+            state,
+            parent: el,
+          });
+        }}
+      ></div>
+      <button
+        class="run-button"
+        onclick={() => {
+          props.run();
+        }}
+      >
+        Roll
+      </button>
+    </div>
   );
 }
