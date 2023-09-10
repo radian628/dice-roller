@@ -83,7 +83,7 @@ export const errInfo = (reason: string, node: PositionedNode) => ({
   node,
 });
 
-function mapOverASTChildren<T>(
+export function mapOverASTChildren<T>(
   node: PositionedNode,
   callback: (node: PositionedNode) => T
 ) {

@@ -5,6 +5,7 @@ import { RootCalculationDisplay } from "../viewer/viewer.jsx";
 import { advantage } from "../functions/advantage.jsx";
 import { attack } from "../functions/attack.jsx";
 import "./repl.less";
+import { CodeInput } from "./code-input.jsx";
 
 export function DiceRollerREPL() {
   const [evaluations, setEvaluations] = createSignal<
@@ -126,7 +127,7 @@ export function DiceRollerREPL() {
           </ul>
         </div>
       </div>
-      <textarea
+      {/* <textarea
         class="repl-input"
         onKeyDown={(evt) => {
           if (evt.key === "Enter" && !evt.shiftKey) {
@@ -138,7 +139,8 @@ export function DiceRollerREPL() {
           setCode(evt.currentTarget.value);
         }}
         value={code()}
-      ></textarea>
+      ></textarea> */}
+      <CodeInput code={code} setCode={setCode} run={handleSubmit}></CodeInput>
     </div>
   );
 }
